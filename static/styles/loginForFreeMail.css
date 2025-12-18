@@ -1,0 +1,12 @@
+.input-plain-wrap.input-wrap-loginid:after {
+    content: '@aliyun.com';
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 22px;
+    right: 8px;
+}
+
+#fm-login-id {
+    padding-right: 90px;
+}
